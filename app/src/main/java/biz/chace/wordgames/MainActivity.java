@@ -18,6 +18,9 @@ public class MainActivity extends AppCompatActivity {
     private TextView CountTextView;
     private TextView LetterDisplay;
 
+    private char[] lettersGenerated;
+    private char[] lettersSubmitted;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,11 +29,21 @@ public class MainActivity extends AppCompatActivity {
         CountTextView = (TextView)findViewById(R.id.CountTextView);
         LetterDisplay = (TextView)findViewById(R.id.LetterDisplay);
 
-        SubmitCharacters('e', 'y', 'e');
-        char[] characters = GenerateRandomLetters();
-        shuffleArray(characters);
-        String letters = new String(characters);
+        lettersGenerated = GenerateRandomLetters();
+        shuffleArray(lettersGenerated);
+        String letters = new String(lettersGenerated);
         LetterDisplay.setText(letters);
+
+        Random rnd = new Random();
+        char[] toSubmit = new char[3];
+        do{
+            for(int i = 0; i < 3; i++){
+                toSubmit[i] = lettersGenerated[rnd.nextInt(lettersGenerated.length)];
+            }
+        } while (!Words.IsThreeLetterWord(CombineCharacters(toSubmit[0],toSubmit[1],toSubmit[2])));
+
+        //SubmitCharacters('e', 'y', 'e');
+        SubmitCharacters(toSubmit[0],toSubmit[1],toSubmit[2]);
     }
 
     protected char[] GenerateRandomLetters(){
@@ -90,6 +103,7 @@ public class MainActivity extends AppCompatActivity {
         return characters;
     }
 
+    /*
     protected void SubmitCharacters(char one, char two, char three){
 
         StringBuilder sb = new StringBuilder();
@@ -103,9 +117,45 @@ public class MainActivity extends AppCompatActivity {
             CountTextView.setText(Integer.toString(currentCount+1));
         }
     }
+    */
 
+    protected void SubmitCharacters(char one, char two, char three){
+
+        lettersSubmitted = new char[]{one, two, three};
+
+        String word = CombineCharacters(one, two, three);
+
+        if(CheckWord(word)){
+            int currentCount = Integer.parseInt(CountTextView.getText().toString());
+            CountTextView.setText(Integer.toString(currentCount+1));
+        }
+    }
+
+    protected String CombineCharacters(char one, char two, char three){
+        StringBuilder sb = new StringBuilder();
+        sb.append(one);
+        sb.append(two);
+        sb.append(three);
+        return sb.toString().toLowerCase();
+    }
+
+    /*
     protected boolean CheckWord(String word){
         return contains(wordList,word);
+    }
+    */
+
+    protected boolean CheckWord(String word){
+        boolean usesRightLetters = true;
+        for(char letter: word.toCharArray()){
+            if(!contains(lettersGenerated,letter))
+                usesRightLetters = false;
+        }
+
+        boolean isRealWord = Words.IsThreeLetterWord(word);
+
+        return usesRightLetters & isRealWord;
+
     }
 
     public static <T> boolean contains(final T[] array, final T v) {
@@ -113,6 +163,15 @@ public class MainActivity extends AppCompatActivity {
             if (e == v || v != null && v.equals(e))
                 return true;
 
+        return false;
+    }
+
+    public boolean contains(final char[] array, final char key) {
+        for (final char i : array) {
+            if (i == key) {
+                return true;
+            }
+        }
         return false;
     }
 
