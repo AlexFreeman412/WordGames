@@ -5,4 +5,5 @@ package biz.chace.wordgames;
  */
 
 public class Words {
+
 }

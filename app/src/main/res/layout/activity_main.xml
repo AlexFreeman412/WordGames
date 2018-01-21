@@ -25,4 +25,12 @@
         android:text="0"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/LetterDisplay"
+        android:layout_width="168dp"
+        android:layout_height="41dp"
+        tools:layout_editor_absoluteX="117dp"
+        tools:layout_editor_absoluteY="190dp" />
+
 </android.support.constraint.ConstraintLayout>
