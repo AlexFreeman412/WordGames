@@ -3,12 +3,19 @@ package biz.chace.wordgames;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Paint;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Html;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.TextView;
+
+import java.awt.font.TextAttribute;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Map;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
@@ -34,6 +41,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         CountTextView = findViewById(R.id.CountTextView);
         LetterDisplay = findViewById(R.id.LetterDisplay);
+
+        correctGuesses = new ArrayList();
 
         StartGame();
     }
@@ -134,11 +143,6 @@ public class MainActivity extends AppCompatActivity {
         return false;
     }
 
-    protected char[] RandomiseArray(char[] characters){
-        Collections.shuffle(Arrays.asList(characters));
-        return characters;
-    }
-
     /*
     protected void SubmitCharacters(char one, char two, char three){
 
@@ -161,8 +165,11 @@ public class MainActivity extends AppCompatActivity {
 
         String word = CombineCharacters(one, two, three);
 
-        if(CheckWord(word))
+        if(CheckWord(word)){
             CountTextView.setText(Integer.toString(numCorrect++));
+            correctGuesses.add(word);
+        }
+
     }
 
     protected String CombineCharacters(char one, char two, char three){
@@ -200,15 +207,27 @@ public class MainActivity extends AppCompatActivity {
         // set title
         alertDialogBuilder.setTitle("Finished");
 
+        LayoutInflater inflater= LayoutInflater.from(this);
+        View wordListView=inflater.inflate(R.layout.word_list, null);
+
+        TextView wordListTextView = wordListView.findViewById(R.id.wordlisttextview);
+        wordListTextView.setText(Html.fromHtml(ListWords(),Html.FROM_HTML_MODE_LEGACY));
+
         // set dialog message
         alertDialogBuilder
-                .setMessage("Congratulations you correctly guessed " + numCorrect + " out of the total "
-                + wordList.toArray().length + " words! You got a score of " + CalcScoreAsPercentage() + "%!")
+                //.setMessage("Congratulations you correctly guessed " + numCorrect + " out of the total "
+                //+ wordList.toArray().length + " words! You got a score of " + CalcScoreAsPercentage() + "%!")
+                .setMessage(Html.fromHtml("<br>Congratulations you correctly guessed " + numCorrect + " out of the total "
+                        + wordList.toArray().length + " words! You got a score of " + CalcScoreAsPercentage() + "%!<br>"
+                        //+ wordListString
+                        , Html.FROM_HTML_MODE_LEGACY))
+                .setView(wordListView)
                 .setCancelable(false)
+
                 .setNeutralButton("Restart",new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog,int id) {
-                        // if this button is clicked, close
-                        // current activity
+                        // if this button is clicked, restart
+                        // the game
                         StartGame();
                     }
                 });
@@ -218,11 +237,42 @@ public class MainActivity extends AppCompatActivity {
 
         // show it
         alertDialog.show();
+
+        alertDialog.getWindow().setLayout(1000, 1200);
     }
 
     protected float CalcScoreAsPercentage(){
         float score = (( (float)numCorrect / (float)wordList.toArray().length) * 100);
         return round(score, 2);
+    }
+
+    protected String ListWords(){
+        StringBuilder sb = new StringBuilder();
+        sb.append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Word List: </b><br>&nbsp;&nbsp;&nbsp;");
+
+        int count = 1;
+        for(String word: wordList){
+            if(correctGuesses != null && !correctGuesses.isEmpty()){
+                if(contains(correctGuesses.toArray(), word)){
+                    sb.append("&nbsp;&nbsp;<strike>" + word + "</strike>");
+                    if(count == 8) {
+                        sb.append("<br>&nbsp;&nbsp;&nbsp;");
+                        count = 0;
+                    } else {
+                        count++;
+                    }
+                    continue;
+                }
+            }
+            sb.append("&nbsp;&nbsp;" + word + "");
+            if(count == 8) {
+                sb.append("<br>&nbsp;&nbsp;&nbsp;");
+                count = 0;
+            } else {
+                count++;
+            }
+        }
+        return sb.toString();
     }
 
     public static <T> boolean contains(final T[] array, final T v) {
