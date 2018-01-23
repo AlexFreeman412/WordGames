@@ -3,7 +3,6 @@ package biz.chace.wordgames;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.Paint;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Html;
@@ -11,11 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
-import java.awt.font.TextAttribute;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Map;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
@@ -51,8 +46,11 @@ public class MainActivity extends AppCompatActivity {
         numCorrect = 0;
         CountTextView.setText(Integer.toString(numCorrect));
 
-        lettersGenerated = GenerateRandomLetters();
-        wordList = GetWords(lettersGenerated);
+        do{
+            lettersGenerated = GenerateRandomLetters();
+            wordList = GetWords(lettersGenerated);
+        } while (wordList.toArray().length < 2);
+
 
         shuffleArray(lettersGenerated);
         String letters = new String(lettersGenerated);
@@ -123,8 +121,9 @@ public class MainActivity extends AppCompatActivity {
         char aRandomChar;
 
         for(int i = 0; i < number; i++){
-            int  n = rand.nextInt(charArray.length) ;
+            int  n;
             do{
+                n = rand.nextInt(charArray.length) ;
                 aRandomChar = charArray[n];
             } while (CheckIfCharIsInArray(aRandomChar,charsToReturn));
 
@@ -255,7 +254,7 @@ public class MainActivity extends AppCompatActivity {
             if(correctGuesses != null && !correctGuesses.isEmpty()){
                 if(contains(correctGuesses.toArray(), word)){
                     sb.append("&nbsp;&nbsp;<strike>" + word + "</strike>");
-                    if(count == 8) {
+                    if(count == 7) {
                         sb.append("<br>&nbsp;&nbsp;&nbsp;");
                         count = 0;
                     } else {
@@ -265,7 +264,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
             sb.append("&nbsp;&nbsp;" + word + "");
-            if(count == 8) {
+            if(count == 7) {
                 sb.append("<br>&nbsp;&nbsp;&nbsp;");
                 count = 0;
             } else {
