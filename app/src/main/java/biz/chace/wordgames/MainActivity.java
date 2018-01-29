@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
 
     protected void StartGame(){
         numCorrect = 0;
+        correctGuesses.clear();
         CountTextView.setText(Integer.toString(numCorrect));
 
         do{
