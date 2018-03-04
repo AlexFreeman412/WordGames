@@ -8,30 +8,122 @@
     tools:context="biz.chace.wordgames.MainActivity">
 
     <TextView
-        android:id="@+id/CountLabel"
+        android:id="@+id/guessTwo"
+        android:layout_width="45dp"
+        android:layout_height="46dp"
+        android:layout_marginStart="28dp"
+        android:textAlignment="center"
+        app:layout_constraintBaseline_toBaselineOf="@+id/guessOne"
+        app:layout_constraintStart_toEndOf="@+id/guessOne"
+        android:background="@drawable/back" />
+
+    <TextView
+        android:id="@+id/guessThree"
+        android:layout_width="45dp"
+        android:layout_height="46dp"
+        android:layout_marginStart="28dp"
+        android:background="@drawable/back"
+        android:textAlignment="center"
+        app:layout_constraintBaseline_toBaselineOf="@+id/guessTwo"
+        app:layout_constraintStart_toEndOf="@+id/guessTwo" />
+
+    <TextView
+        android:id="@+id/countLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginRight="88dp"
         android:layout_marginTop="24dp"
-        android:text="Count:"
+        android:text="Correct:"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/CountTextView"
+        android:id="@+id/countTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="68dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginStart="16dp"
         android:text="0"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintBaseline_toBaselineOf="@+id/countLabel"
+        app:layout_constraintStart_toEndOf="@+id/countLabel" />
 
     <TextView
-        android:id="@+id/LetterDisplay"
-        android:layout_width="168dp"
-        android:layout_height="41dp"
-        tools:layout_editor_absoluteX="117dp"
-        tools:layout_editor_absoluteY="190dp" />
+        android:id="@+id/guessOne"
+        android:layout_width="45dp"
+        android:layout_height="46dp"
+        android:layout_marginStart="91dp"
+        android:layout_marginTop="80dp"
+        android:textAlignment="center"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/letterThree"
+        android:background="@drawable/back"/>
+
+    <Button
+        android:id="@+id/letterOne"
+        android:layout_width="52dp"
+        android:layout_height="52dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="140dp"
+        app:layout_constraintStart_toEndOf="@+id/letterThree"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/letterTwo"
+        android:layout_width="52dp"
+        android:layout_height="52dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="140dp"
+        app:layout_constraintStart_toEndOf="@+id/letterOne"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/letterThree"
+        android:layout_width="52dp"
+        android:layout_height="52dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="140dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/letterFour"
+        android:layout_width="52dp"
+        android:layout_height="52dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="140dp"
+        app:layout_constraintStart_toEndOf="@+id/letterFive"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/letterFive"
+        android:layout_width="52dp"
+        android:layout_height="52dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="140dp"
+        app:layout_constraintStart_toEndOf="@+id/letterSix"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/letterSix"
+        android:layout_width="52dp"
+        android:layout_height="52dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="140dp"
+        app:layout_constraintStart_toEndOf="@+id/letterTwo"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/done"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="78dp"
+        android:layout_marginEnd="126dp"
+        android:layout_marginStart="126dp"
+        android:layout_marginTop="8dp"
+        android:text="Done Guessing"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/guessOne"
+        app:layout_constraintVertical_bias="1.0" />
 
 </android.support.constraint.ConstraintLayout>

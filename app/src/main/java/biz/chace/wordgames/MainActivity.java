@@ -8,19 +8,33 @@ import android.os.Bundle;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
-
 import java.util.ArrayList;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
 
-    //private String wordList[] = {"aah","aha","ate","awe","aye","eat","eta","ewe","eye","hat","haw","hay","het","hew","hey","taw","tea","tee","tet","the","thy","waw","way","wee","wet","why","wye","yah","yaw","yay","yea","yeh","yet","yew"};
     private TextView CountTextView;
-    private TextView LetterDisplay;
+
+    private Button LetterOneButton;
+    private Button LetterTwoButton;
+    private Button LetterThreeButton;
+    private Button LetterFourButton;
+    private Button LetterFiveButton;
+    private Button LetterSixButton;
+
+    private Button[] LetterButtons;
+
+    private TextView GuessOneTextView;
+    private TextView GuessTwoTextView;
+    private TextView GuessThreeTextView;
+
+    private TextView[] GuessTextViews;
+
+    private Button DoneButton;
 
     private char[] lettersGenerated;
-    private char[] lettersSubmitted;
 
     private ArrayList<String> wordList;
     private ArrayList<String> correctGuesses;
@@ -34,10 +48,33 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        CountTextView = findViewById(R.id.CountTextView);
-        LetterDisplay = findViewById(R.id.LetterDisplay);
+
+        CountTextView = findViewById(R.id.countTextView);
+
+        LetterOneButton = findViewById(R.id.letterOne);
+        LetterTwoButton = findViewById(R.id.letterTwo);
+        LetterThreeButton = findViewById(R.id.letterThree);
+        LetterFourButton = findViewById(R.id.letterFour);
+        LetterFiveButton = findViewById(R.id.letterFive);
+        LetterSixButton = findViewById(R.id.letterSix);
+
+        LetterButtons = new Button[]{LetterOneButton, LetterTwoButton, LetterThreeButton,
+                LetterFourButton, LetterFiveButton, LetterSixButton};
+
+        GuessOneTextView = findViewById(R.id.guessOne);
+        GuessTwoTextView = findViewById(R.id.guessTwo);
+        GuessThreeTextView = findViewById(R.id.guessThree);
+
+        GuessTextViews = new TextView[]{GuessOneTextView, GuessTwoTextView, GuessThreeTextView};
+
+        DoneButton = findViewById(R.id.done);
 
         correctGuesses = new ArrayList();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
 
         StartGame();
     }
@@ -52,12 +89,78 @@ public class MainActivity extends AppCompatActivity {
             wordList = GetWords(lettersGenerated);
         } while (wordList.toArray().length < 2);
 
-
         shuffleArray(lettersGenerated);
-        String letters = new String(lettersGenerated);
-        LetterDisplay.setText(letters);
 
-        TestGame();
+        for(int i = 0; i < lettersGenerated.length; i++){
+            LetterButtons[i].setText(Character.toString(lettersGenerated[i]));
+
+            Button button = LetterButtons[i];
+            button.setOnClickListener(new Button.OnClickListener() {
+
+                public void onClick(View view) {
+                    Button button = (Button)view;
+                    SetNextLetter(button.getText().toString());
+                    if(AllGuessTextViewsFull()){
+                        char[] toSubmit = GetChars();
+                        SubmitCharacters(toSubmit);
+                        if(AllWordsGuessed()){
+                            ShowFinishScreen();
+                        }
+                    }
+                }
+            });
+        }
+
+        for(int i = 0; i < GuessTextViews.length; i++){
+            TextView guessTextView = GuessTextViews[i];
+            guessTextView.setText("");
+            guessTextView.setOnClickListener(new TextView.OnClickListener() {
+
+                public void onClick(View view) {
+                    TextView textView = (TextView)view;
+                    textView.setText("");
+                }
+            });
+        }
+
+        DoneButton.setOnClickListener(new Button.OnClickListener() {
+            public void onClick(View view) {
+                ShowFinishScreen();
+            }
+        });
+
+
+    }
+
+    protected char[] GetChars(){
+        char[] charArray = new char[GuessTextViews.length];
+        for(int i = 0; i < GuessTextViews.length; i++){
+                charArray[i] = GuessTextViews[i].getText().charAt(0);
+        }
+        return charArray;
+    }
+
+    protected void SetNextLetter(String selectedLetter){
+        for(int i = 0; i < GuessTextViews.length; i++){
+            if(GuessTextViews[i].getText().equals("")){
+                GuessTextViews[i].setText(selectedLetter);
+                return;
+            }
+        }
+    }
+
+    protected boolean AllGuessTextViewsFull(){
+        boolean allFull = true;
+        for(int i = 0; i < GuessTextViews.length; i++){
+            if(GuessTextViews[i].getText().equals("")){
+                allFull = false;
+            }
+        }
+        return allFull;
+    }
+
+    protected boolean AllWordsGuessed(){
+        return correctGuesses.size() == wordList.size();
     }
 
     protected void TestGame(){
@@ -67,10 +170,9 @@ public class MainActivity extends AppCompatActivity {
             for(int i = 0; i < 3; i++){
                 toSubmit[i] = lettersGenerated[rnd.nextInt(lettersGenerated.length)];
             }
-        } while (!Words.IsThreeLetterWord(CombineCharacters(toSubmit[0],toSubmit[1],toSubmit[2])));
+        } while (!Words.IsThreeLetterWord(CombineCharacters(toSubmit)));
 
-        //SubmitCharacters('e', 'y', 'e');
-        SubmitCharacters(toSubmit[0],toSubmit[1],toSubmit[2]);
+        SubmitCharacters(toSubmit);
 
         ShowFinishScreen();
     }
@@ -143,48 +245,32 @@ public class MainActivity extends AppCompatActivity {
         return false;
     }
 
-    /*
-    protected void SubmitCharacters(char one, char two, char three){
+    protected void SubmitCharacters(char[] lettersSubmitted){
 
-        StringBuilder sb = new StringBuilder();
-        sb.append(one);
-        sb.append(two);
-        sb.append(three);
-        String word = sb.toString().toLowerCase();
+        String word = CombineCharacters(lettersSubmitted);
 
         if(CheckWord(word)){
-            int currentCount = Integer.parseInt(CountTextView.getText().toString());
-            CountTextView.setText(Integer.toString(currentCount+1));
-        }
-    }
-    */
-
-    protected void SubmitCharacters(char one, char two, char three){
-
-        lettersSubmitted = new char[]{one, two, three};
-
-        String word = CombineCharacters(one, two, three);
-
-        if(CheckWord(word)){
-            CountTextView.setText(Integer.toString(numCorrect++));
+            numCorrect++;
+            CountTextView.setText(Integer.toString(numCorrect));
             correctGuesses.add(word);
         }
 
+        ClearGuessViews();
     }
 
-    protected String CombineCharacters(char one, char two, char three){
+    protected void ClearGuessViews(){
+        for(int i = 0; i < GuessTextViews.length; i++){
+            GuessTextViews[i].setText("");
+        }
+    }
+
+    protected String CombineCharacters(char[] characters){
         StringBuilder sb = new StringBuilder();
-        sb.append(one);
-        sb.append(two);
-        sb.append(three);
+        for(int i = 0; i < characters.length; i++){
+            sb.append(characters[i]);
+        }
         return sb.toString().toLowerCase();
     }
-
-    /*
-    protected boolean CheckWord(String word){
-        return contains(wordList,word);
-    }
-    */
 
     protected boolean CheckWord(String word){
         boolean usesRightLetters = true;
@@ -193,10 +279,11 @@ public class MainActivity extends AppCompatActivity {
                 usesRightLetters = false;
         }
 
-        //boolean isRealWord = Words.IsThreeLetterWord(word);
         boolean isRealWord = contains(wordList.toArray(),word);
 
-        return usesRightLetters & isRealWord;
+        boolean alreadyGuessed = correctGuesses.contains(word);
+
+        return usesRightLetters & isRealWord & !alreadyGuessed;
 
     }
 
@@ -215,8 +302,6 @@ public class MainActivity extends AppCompatActivity {
 
         // set dialog message
         alertDialogBuilder
-                //.setMessage("Congratulations you correctly guessed " + numCorrect + " out of the total "
-                //+ wordList.toArray().length + " words! You got a score of " + CalcScoreAsPercentage() + "%!")
                 .setMessage(Html.fromHtml("<br>Congratulations you correctly guessed " + numCorrect + " out of the total "
                         + wordList.toArray().length + " words! You got a score of " + CalcScoreAsPercentage() + "%!<br>"
                         //+ wordListString
